@@ -1,0 +1,396 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaming Strategy Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .header h1 {
+        color: #2d3748;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .header p {
+        color: #666;
+        font-size: 1.1rem;
+    }
+
+    .game-selector {
+        margin-bottom: 30px;
+    }
+
+    .game-selector label {
+        display: block;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 10px;
+    }
+
+    .game-selector select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 16px;
+        background: white;
+        transition: all 0.3s ease;
+    }
+
+    .game-selector select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .skill-level {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+
+    .skill-level label {
+        font-weight: 600;
+        color: #2d3748;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .skill-option {
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .skill-option input[type="radio"] {
+        display: none;
+    }
+
+    .skill-option label {
+        display: block;
+        padding: 12px 20px;
+        background: #f7fafc;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        width: 100%;
+        margin: 0;
+    }
+
+    .skill-option input[type="radio"]:checked + label {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border-color: #667eea;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .question-input {
+        margin-bottom: 30px;
+    }
+
+    .question-input label {
+        display: block;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 10px;
+    }
+
+    .question-input textarea {
+        width: 100%;
+        padding: 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 16px;
+        resize: vertical;
+        min-height: 120px;
+        font-family: inherit;
+        transition: all 0.3s ease;
+    }
+
+    .question-input textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 16px 32px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .submit-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .loading {
+        display: none;
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .spinner {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #667eea;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .response {
+        display: none;
+        margin-top: 30px;
+        padding: 25px;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border-radius: 15px;
+        border-left: 5px solid #667eea;
+    }
+
+    .response h3 {
+        color: #2d3748;
+        margin-bottom: 15px;
+        font-size: 1.3rem;
+    }
+
+    .response-content {
+        color: #4a5568;
+        line-height: 1.6;
+        white-space: pre-wrap;
+    }
+
+    .error {
+        background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+        border-left-color: #e53e3e;
+    }
+
+    @media (max-width: 640px) {
+        .container {
+            padding: 20px;
+            margin: 10px;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+        }
+        
+        .skill-level {
+            flex-direction: column;
+        }
+        
+        .skill-option {
+            min-width: unset;
+        }
+    }
+</style>
+
+
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Gaming Strategy Assistant</h1>
+            <p>Get personalized gaming strategies and tips powered by AI</p>
+        </div>
+
+
+    <form id="strategyForm">
+        <div class="game-selector">
+            <label for="game">Select Your Game:</label>
+            <select id="game" name="game" required>
+                <option value="">Choose a game...</option>
+                <option value="valorant">Valorant</option>
+                <option value="csgo">CS2 (Counter-Strike)</option>
+                <option value="lol">League of Legends</option>
+                <option value="dota2">Dota 2</option>
+                <option value="apex">Apex Legends</option>
+                <option value="overwatch">Overwatch 2</option>
+                <option value="fortnite">Fortnite</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+
+        <div class="skill-level">
+            <label>Your Skill Level:</label>
+            <div class="skill-option">
+                <input type="radio" id="beginner" name="skill" value="beginner" required>
+                <label for="beginner">Beginner</label>
+            </div>
+            <div class="skill-option">
+                <input type="radio" id="intermediate" name="skill" value="intermediate">
+                <label for="intermediate">Intermediate</label>
+            </div>
+            <div class="skill-option">
+                <input type="radio" id="advanced" name="skill" value="advanced">
+                <label for="advanced">Advanced</label>
+            </div>
+        </div>
+
+        <div class="question-input">
+            <label for="question">What do you need help with?</label>
+            <textarea 
+                id="question" 
+                name="question" 
+                placeholder="e.g., How can I improve my aim in Valorant? What's the best agent for beginners? How do I position better in ranked matches?"
+                required
+            ></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+            Get Strategy Tips
+        </button>
+    </form>
+
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Getting your personalized strategy tips...</p>
+    </div>
+
+    <div class="response" id="response">
+        <h3>Strategy Recommendations</h3>
+        <div class="response-content" id="responseContent"></div>
+    </div>
+</div>
+
+<script>
+    // Replace this URL with your actual Relevance.ai API endpoint
+    const RELEVANCE_API_URL = 'YOUR_RELEVANCE_API_ENDPOINT';
+    const API_KEY = 'YOUR_API_KEY';
+
+    document.getElementById('strategyForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const game = formData.get('game');
+        const skill = formData.get('skill');
+        const question = formData.get('question');
+        
+        // Show loading state
+        document.getElementById('submitBtn').disabled = true;
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('response').style.display = 'none';
+        
+        try {
+            // Construct the query for your AI agent
+            const query = `Game: ${game}, Skill Level: ${skill}, Question: ${question}`;
+            
+            // Example API call structure - adjust based on Relevance.ai documentation
+            const response = await fetch(RELEVANCE_API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${API_KEY}`
+                },
+                body: JSON.stringify({
+                    message: query,
+                    // Add other required parameters based on Relevance.ai API
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('API request failed');
+            }
+
+            const result = await response.json();
+            
+            // Display the response
+            document.getElementById('responseContent').textContent = result.message || result.response || 'No response received';
+            document.getElementById('response').style.display = 'block';
+            document.getElementById('response').classList.remove('error');
+            
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('responseContent').textContent = 'Sorry, there was an error processing your request. Please try again later.';
+            document.getElementById('response').style.display = 'block';
+            document.getElementById('response').classList.add('error');
+        } finally {
+            // Hide loading state
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('submitBtn').disabled = false;
+        }
+    });
+
+    // Add some example questions based on game selection
+    document.getElementById('game').addEventListener('change', function() {
+        const game = this.value;
+        const questionTextarea = document.getElementById('question');
+        
+        const examples = {
+            'valorant': 'How can I improve my crosshair placement and aim in Valorant?',
+            'csgo': 'What are the best spots to learn for each map in CS2?',
+            'lol': 'How do I improve my last hitting and farming in League of Legends?',
+            'dota2': 'What heroes should I learn first in Dota 2?',
+            'apex': 'How can I improve my positioning in Apex Legends ranked?',
+            'overwatch': 'What tank heroes are best for beginners in Overwatch 2?',
+            'fortnite': 'How can I get better at building in Fortnite?'
+        };
+        
+        if (examples[game]) {
+            questionTextarea.placeholder = examples[game];
+        }
+    });
+</script>
+
+
+</body>
+</html>
+
